@@ -257,33 +257,22 @@ namespace Marafone.Tests.Domain
         [Fact]
         public void PartitaIntera_SimulazioneFinoAi41Punti_Squadra1Vince()
         {
-            // 1. SETUP
+            // 1. SETUP INIZIALE
             var match = new Match(_squad1, _squad2);
 
-            // --- SMAZZATA 1 ---
+            // --- PRIMA SMAZZATA ---
             match.StartNewGame();
 
-            // PULIZIA TOTALE: Accediamo ai giocatori tramite il match per essere sicuri dei riferimenti
-            var players = new[] { _p1, _p2, _p3, _p4 };
-            foreach (var p in players) p.Hand.Clear();
+            // Pulizia totale delle mani per evitare doppioni del 4 di Denara
+            _p1.Hand.Clear(); _p2.Hand.Clear(); _p3.Hand.Clear(); _p4.Hand.Clear();
 
-            // Diamo il 4 di Denara a P1 (Squadra 1, Indice 0)
-            _p1.Hand.Add(new Card(Rank.quattro, Suit.denara));
-            // Diamo una Maraffa di Bastoni a P1
-            _p1.Hand.Add(new Card(Rank.asso, Suit.bastoni));
-            _p1.Hand.Add(new Card(Rank.due, Suit.bastoni));
-            _p1.Hand.Add(new Card(Rank.tre, Suit.bastoni));
-
-            // Reset turno: dobbiamo ricalcolare il turno perché abbiamo cambiato le mani
-            // Usiamo un piccolo trick: chiamiamo il metodo privato tramite reflection o più semplicemente
-            // simuliamo la logica di inizio.
-            match.StartNewGame(); // Rilanciamo per far sì che ImpostaTurno cerchi il NOSTRO 4 di denara
-            foreach (var p in players) p.Hand.Clear();
+            // P1 (Squadra 1) prende il comando
             _p1.Hand.Add(new Card(Rank.quattro, Suit.denara));
             _p1.Hand.Add(new Card(Rank.asso, Suit.bastoni));
             _p1.Hand.Add(new Card(Rank.due, Suit.bastoni));
             _p1.Hand.Add(new Card(Rank.tre, Suit.bastoni));
-            // Riempiamo per arrivare a 10 carte (il dominio vuole 10 carte per giocare bene)
+
+            // Riempimento scartine
             for (int i = 0; i < 6; i++) _p1.Hand.Add(new Card(Rank.cinque, Suit.coppe));
             for (int i = 0; i < 10; i++)
             {
@@ -292,36 +281,37 @@ namespace Marafone.Tests.Domain
                 _p4.Hand.Add(new Card(Rank.quattro, Suit.spade));
             }
 
-            // Ora P1 è DI TURNO sicuramente
+            // P1 dichiara briscola e gioca l'Asso (Maraffa!)
             match.SetBriscola(_p1, Suit.bastoni);
-
-            // Gioca l'Asso (Maraffa)
             match.PlayCard(_p1, new Card(Rank.asso, Suit.bastoni));
+
             Assert.Equal(3, _squad1.MatchPoints.Value);
 
-            // Facciamo 30 punti grezzi
+            // Carichiamo punti per chiudere velocemente (30 grezzi)
             _squad1.AddTrickPoints(30);
 
-            // Chiudiamo la smazzata 1
-            foreach (var p in players) p.Hand.Clear();
-            _p1.Hand.Add(new Card(Rank.re, Suit.bastoni));
-            _p2.Hand.Add(new Card(Rank.fante, Suit.coppe));
-            _p3.Hand.Add(new Card(Rank.cavallo, Suit.coppe));
-            _p4.Hand.Add(new Card(Rank.asso, Suit.spade));
+            // Fine prima smazzata (P1 vince l'ultima mano)
+            _p1.Hand.Clear(); _p1.Hand.Add(new Card(Rank.re, Suit.bastoni));
+            _p2.Hand.Clear(); _p2.Hand.Add(new Card(Rank.fante, Suit.coppe));
+            _p3.Hand.Clear(); _p3.Hand.Add(new Card(Rank.cavallo, Suit.coppe));
+            _p4.Hand.Clear(); _p4.Hand.Add(new Card(Rank.asso, Suit.spade));
 
             match.PlayCard(_p1, _p1.Hand[0]);
             match.PlayCard(_p2, _p2.Hand[0]);
             match.PlayCard(_p3, _p3.Hand[0]);
             match.PlayCard(_p4, _p4.Hand[0]);
 
+            // Squadra 1: 3 (maraffa) + (30 + 6 + 3 mazzo)/3 = 16 punti.
             Assert.Equal(16, _squad1.MatchPoints.Value);
 
-            // --- SMAZZATA 2 ---
+            // --- SECONDA SMAZZATA ---
             match.StartNewGame();
-            foreach (var p in players) p.Hand.Clear();
 
-            // Questa volta diamo il 4 di Denara a P1 di nuovo per comodità del test
-            _p1.Hand.Add(new Card(Rank.quattro, Suit.denara));
+            // IMPORTANTE: Pulizia totale di nuovo per resettare il turno sul 4 di Denara
+            _p1.Hand.Clear(); _p2.Hand.Clear(); _p3.Hand.Clear(); _p4.Hand.Clear();
+            _p1.Hand.Add(new Card(Rank.quattro, Suit.denara)); // Ora P1 è DI NUOVO l'unico con la carta del turno
+
+            // Riempiamo le mani degli altri per non far crashare StartNewGame internamente (che controlla le 10 carte)
             for (int i = 0; i < 9; i++) _p1.Hand.Add(new Card(Rank.cinque, Suit.spade));
             for (int i = 0; i < 10; i++)
             {
@@ -330,10 +320,13 @@ namespace Marafone.Tests.Domain
                 _p4.Hand.Add(new Card(Rank.quattro, Suit.spade));
             }
 
+            // Ora SetBriscola su P1 NON può fallire
             match.SetBriscola(_p1, Suit.spade);
-            _squad1.AddTrickPoints(72); // Punti per arrivare a 41
 
-            // Ultime carte
+            // Facciamo fare 72 punti grezzi alla Squadra 1
+            _squad1.AddTrickPoints(72);
+
+            // Ultima mano della partita
             _p1.Hand.Clear(); _p1.Hand.Add(new Card(Rank.tre, Suit.spade));
             _p2.Hand.Clear(); _p2.Hand.Add(new Card(Rank.quattro, Suit.coppe));
             _p3.Hand.Clear(); _p3.Hand.Add(new Card(Rank.cinque, Suit.coppe));
@@ -344,9 +337,11 @@ namespace Marafone.Tests.Domain
             match.PlayCard(_p3, _p3.Hand[0]);
             match.PlayCard(_p4, _p4.Hand[0]);
 
-            // FINALE
+            // --- VERIFICA FINALE ---
+            // 16 (prec) + (72 + 0 + 3)/3 = 16 + 25 = 41.
             Assert.True(match.IsGameOver);
             Assert.Equal(_squad1.Name, match.VincitorePartita.Name);
+            Assert.Equal(41, _squad1.MatchPoints.Value);
         }
     }
 }

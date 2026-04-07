@@ -215,5 +215,25 @@ namespace Marafone.Domain.GameLogic
             if (Squadra2.Player1.Id == p.Id || Squadra2.Player2.Id == p.Id) return Squadra2;
             throw new Exception("Giocatore non trovato in nessuna squadra!");
         }
+
+        // --- HELPERS PER I TEST / DEBUG: permettono di forzare il giocatore di turno ---
+        /// <summary>
+        /// Forza l'indice del giocatore corrente (0..3). Utile nei test che manipolano le mani.
+        /// </summary>
+        public void ForceSetCurrentPlayerIndex(int index)
+        {
+            if (index < 0 || index > 3) throw new ArgumentOutOfRangeException(nameof(index));
+            CurrentPlayerIndex = index;
+        }
+
+        /// <summary>
+        /// Forza il giocatore corrente passando l'istanza Player (deve essere uno dei 4 seduti).
+        /// </summary>
+        public void ForceSetCurrentPlayer(Player player)
+        {
+            int idx = Array.IndexOf(_sedie, player);
+            if (idx == -1) throw new ArgumentException("Giocatore non seduto al tavolo.", nameof(player));
+            CurrentPlayerIndex = idx;
+        }
     }
 }
