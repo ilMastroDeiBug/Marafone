@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marafone.Domain", "src\Mara
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C83A596-D32D-B35F-00DD-F0C99B673980}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0FEE9ECE-AFD6-4B61-A6C4-D27FE58F4CC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marafone.Test", "test\Marafone.Test\Marafone.Test.csproj", "{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,12 +21,17 @@ Global
 		{D3EA8047-4D39-4CD1-9CAB-5274B026B19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3EA8047-4D39-4CD1-9CAB-5274B026B19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3EA8047-4D39-4CD1-9CAB-5274B026B19C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D3EA8047-4D39-4CD1-9CAB-5274B026B19C} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{DCEFC43F-C98D-4FD9-AAD9-17C2822A340B} = {0FEE9ECE-AFD6-4B61-A6C4-D27FE58F4CC4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9A8BF3A9-61E1-4204-8231-E055B20561FE}

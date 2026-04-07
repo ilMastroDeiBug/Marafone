@@ -11,6 +11,7 @@ namespace Marafone.Domain.ValueObjects
         coppe,
         denara,
         bastoni,
-        spade
+        spade,
+        nessuna_briscola_per_test_finto
     }
 }

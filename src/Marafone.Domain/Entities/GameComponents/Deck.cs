@@ -10,7 +10,7 @@ namespace Marafone.Domain.Entities.GameComponents
 {
     public class Deck
     {
-        public List<Card> Cards { get; set; }
+        public List<Card> Cards { get; private set; }
         private Random _random = new Random();
         public Deck()
         {

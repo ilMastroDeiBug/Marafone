@@ -15,7 +15,7 @@ namespace Marafone.Domain.Entities.UsersEntities
         public List<Card> Hand { get; private set; }
         public Player(Name name)
         {
-            Id = new Guid();
+            Id = Guid.NewGuid();
             Name = name;
             Hand = new List<Card>();
         }
