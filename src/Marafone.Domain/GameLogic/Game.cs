@@ -13,6 +13,7 @@ namespace Marafone.Domain.GameLogic
         // Le due squadre
         public Squad Squadra1 { get; private set; }
         public Squad Squadra2 { get; private set; }
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         // I giocatori seduti al tavolo in ordine antiorario
         private readonly Player[] _sedie;
