@@ -26,9 +26,9 @@ namespace Marafone.Tests.Domain
         }
 
         // --- HELPER DI TEST ---
-        private Match SetupRiggedMatch()
+        private Game SetupRiggedMatch()
         {
-            var match = new Match(_squad1, _squad2);
+            var match = new Game(_squad1, _squad2);
             do
             {
                 match.StartNewGame();
@@ -47,7 +47,7 @@ namespace Marafone.Tests.Domain
         [Fact]
         public void StartNewGame_DistribuisceEsattamente10CarteATutti()
         {
-            var match = new Match(_squad1, _squad2);
+            var match = new Game(_squad1, _squad2);
             match.StartNewGame();
 
             Assert.Equal(10, _p1.Hand.Count);
@@ -62,7 +62,7 @@ namespace Marafone.Tests.Domain
         [Fact]
         public void StartNewGame_ChiHaIlQuattroDiDenaraEIlCurrentPlayer()
         {
-            var match = new Match(_squad1, _squad2);
+            var match = new Game(_squad1, _squad2);
             match.StartNewGame();
 
             var playerConIlQuattro = new[] { _p1, _p2, _p3, _p4 }
@@ -258,7 +258,7 @@ namespace Marafone.Tests.Domain
         public void PartitaIntera_SimulazioneFinoAi41Punti_Squadra1Vince()
         {
             // 1. SETUP INIZIALE
-            var match = new Match(_squad1, _squad2);
+            var match = new Game(_squad1, _squad2);
 
             // --- PRIMA SMAZZATA ---
             match.StartNewGame();

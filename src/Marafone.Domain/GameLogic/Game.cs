@@ -8,12 +8,12 @@ using System.Linq;
 
 namespace Marafone.Domain.GameLogic
 {
-    public class Match
+    public class Game
     {
         // Le due squadre
         public Squad Squadra1 { get; private set; }
         public Squad Squadra2 { get; private set; }
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        public Guid Id { get; private set; } 
 
         // I giocatori seduti al tavolo in ordine antiorario
         private readonly Player[] _sedie;
@@ -38,7 +38,7 @@ namespace Marafone.Domain.GameLogic
         private readonly TrickEvaluator _trickEvaluator;
         private readonly MaraffaEvaluator _maraffaEvaluator;
 
-        public Match(Squad sq1, Squad sq2)
+        public Game(Squad sq1, Squad sq2)
         {
             Squadra1 = sq1;
             Squadra2 = sq2;
@@ -51,6 +51,7 @@ namespace Marafone.Domain.GameLogic
 
             IsGameOver = false;
             VincitorePartita = null;
+            Id = Guid.NewGuid();
         }
 
         // --- FASE 1: INIZIO PARTITA E 4 DI DENARI ---

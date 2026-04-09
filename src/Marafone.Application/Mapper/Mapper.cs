@@ -50,7 +50,7 @@ namespace Marafone.Application.Mappers
             };
         }
 
-        public static MatchDTO ToDTO(Match match)
+        public static MatchDTO ToDTO(Game match)
         {
             return new MatchDTO
             {
