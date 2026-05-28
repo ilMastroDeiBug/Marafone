@@ -1,4 +1,4 @@
-﻿using Marafone.Application.DTOs;
+using Marafone.Application.DTOs;
 using Marafone.Domain.Entities.GameComponents;
 using Marafone.Domain.Entities.UsersEntities;
 using Marafone.Domain.GameLogic;
@@ -22,9 +22,9 @@ namespace Marafone.Application.Mappers
         {
             return new PlayedCardDTO
             {
-                PlayerId = playedCard.Player.Id,
+                PlayerId   = playedCard.Player.Id,
                 PlayerName = playedCard.Player.Name.Value,
-                Card = ToDTO(playedCard.Card)
+                Card       = ToDTO(playedCard.Card)
             };
         }
 
@@ -32,7 +32,7 @@ namespace Marafone.Application.Mappers
         {
             return new PlayerDTO
             {
-                Id = player.Id,
+                Id   = player.Id,
                 Name = player.Name.Value,
                 Hand = player.Hand.Select(c => ToDTO(c)).ToList()
             };
@@ -42,26 +42,37 @@ namespace Marafone.Application.Mappers
         {
             return new SquadDTO
             {
-                Name = squad.Name.Value,
-                Player1 = ToDTO(squad.Player1),
-                Player2 = ToDTO(squad.Player2),
-                MatchPoints = squad.MatchPoints.Value,
+                Name           = squad.Name.Value,
+                Player1        = ToDTO(squad.Player1),
+                Player2        = ToDTO(squad.Player2),
+                MatchPoints    = squad.MatchPoints.Value,
                 HandPointsReal = squad.HandPoints.RealValue
             };
         }
 
         public static MatchDTO ToDTO(Game match)
         {
+            string phase;
+            if (match.IsGameOver)
+                phase = "GameOver";
+            else if (match.BriscolaAttuale == null)
+                phase = "BriscolaSelection";
+            else
+                phase = "Playing";
+
             return new MatchDTO
             {
-                Id = match.Id,
-                Squadra1 = ToDTO(match.Squadra1),
-                Squadra2 = ToDTO(match.Squadra2),
-                BriscolaAttuale = match.BriscolaAttuale?.ToString(),
-                CurrentPlayerId = match.CurrentPlayer.Id,
-                Tavolo = match.Tavolo.Select(pc => ToDTO(pc)).ToList(),
-                IsGameOver = match.IsGameOver,
-                VincitorePartita = match.VincitorePartita?.Name.Value
+                Id                = match.Id,
+                Squadra1          = ToDTO(match.Squadra1),
+                Squadra2          = ToDTO(match.Squadra2),
+                BriscolaAttuale   = match.BriscolaAttuale?.ToString(),
+                CurrentPlayerId   = match.CurrentPlayer.Id,
+                CurrentPlayerName = match.CurrentPlayer.Name.Value,
+                Tavolo            = match.Tavolo.Select(pc => ToDTO(pc)).ToList(),
+                IsGameOver        = match.IsGameOver,
+                VincitorePartita  = match.VincitorePartita?.Name.Value,
+                TargetPoints      = match.TargetPoints,
+                Phase             = phase
             };
         }
     }

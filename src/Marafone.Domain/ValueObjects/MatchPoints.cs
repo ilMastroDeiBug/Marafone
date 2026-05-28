@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using System;
 
 namespace Marafone.Domain.ValueObjects
@@ -16,18 +10,14 @@ namespace Marafone.Domain.ValueObjects
         {
             if (value < 0)
                 throw new ArgumentException("I punti partita non possono scendere sotto zero.");
-
             Value = value;
         }
-        public MatchPoints Add(int points)
-        {
-            return new MatchPoints(this.Value + points);
-        }
 
-        // La regola di vittoria sta qui, non sparsa nel codice!
-        public bool HasWon()
-        {
-            return Value >= 41;
-        }
+        public MatchPoints Add(int points) => new MatchPoints(this.Value + points);
+
+        /// <summary>
+        /// Verifica vittoria con target dinamico (21 / 31 / 41).
+        /// </summary>
+        public bool HasWon(int targetPoints) => Value >= targetPoints;
     }
 }

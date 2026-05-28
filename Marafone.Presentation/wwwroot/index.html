@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marafone Romagnolo — Accedi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="auth-page">
+
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Floating cards decoration -->
+  <div class="floating-cards" aria-hidden="true">
+    <span class="fc fc-1">🃏</span>
+    <span class="fc fc-2">♠️</span>
+    <span class="fc fc-3">♦️</span>
+    <span class="fc fc-4">♣️</span>
+    <span class="fc fc-5">♥️</span>
+  </div>
+
+  <main class="auth-container">
+    <div class="auth-card">
+      <!-- Logo / Titolo -->
+      <div class="auth-logo">
+        <div class="logo-icon">🃏</div>
+        <h1 class="logo-title">Marafone</h1>
+        <p class="logo-subtitle">Il gioco romagnolo per eccellenza</p>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="tab-switcher" role="tablist">
+        <button id="tab-login" class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('login')">
+          Accedi
+        </button>
+        <button id="tab-register" class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('register')">
+          Registrati
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="field-group">
+          <label for="login-username">Username</label>
+          <input
+            type="text" id="login-username" name="username"
+            placeholder="Il tuo nome..." autocomplete="username"
+            required />
+        </div>
+        <button type="submit" class="btn-primary" id="btn-login">
+          <span class="btn-text">Entra al Tavolo</span>
+          <span class="btn-icon">→</span>
+        </button>
+        <p class="auth-hint">Non hai un account? <a href="#" onclick="switchTab('register')">Registrati</a></p>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="form-register" class="auth-form hidden" onsubmit="handleRegister(event)">
+        <div class="field-group">
+          <label for="reg-username">Username</label>
+          <input
+            type="text" id="reg-username" name="username"
+            placeholder="Scegli il tuo nome..." autocomplete="username"
+            required />
+        </div>
+        <div class="field-group">
+          <label for="reg-email">Email <span class="optional">(opzionale)</span></label>
+          <input
+            type="email" id="reg-email" name="email"
+            placeholder="la-tua@email.it" autocomplete="email" />
+        </div>
+        <button type="submit" class="btn-primary" id="btn-register">
+          <span class="btn-text">Crea Account</span>
+          <span class="btn-icon">✓</span>
+        </button>
+        <p class="auth-hint">Hai già un account? <a href="#" onclick="switchTab('login')">Accedi</a></p>
+      </form>
+
+      <!-- Feedback message -->
+      <div id="auth-message" class="auth-message hidden" role="alert"></div>
+    </div>
+
+    <!-- Info banner -->
+    <div class="rules-banner">
+      <h3>Come si gioca?</h3>
+      <ul>
+        <li>🃏 <strong>4 giocatori</strong> in 2 squadre</li>
+        <li>♦️ Chi ha il <strong>4 di Denari</strong> sceglie la briscola</li>
+        <li>🎯 <strong>Obbligo di rispondere</strong> al seme di uscita</li>
+        <li>🏆 Prima squadra a <strong>21 / 31 / 41 punti</strong> vince</li>
+        <li>⚡ Marafone (A+2+3 di briscola) = punti immediati!</li>
+      </ul>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

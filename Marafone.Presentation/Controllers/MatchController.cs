@@ -1,4 +1,4 @@
-﻿using Marafone.Application.DTOs;
+using Marafone.Application.DTOs;
 using Marafone.Application.UseCases.Commands;
 using Marafone.Application.UseCases.Queries;
 using Marafone.Presentation.Hubs; // Assicurati di avere questo
@@ -30,10 +30,11 @@ namespace Marafone.Presentation.Controllers
         {
             try
             {
+                int target = request.TargetPoints is 21 or 31 or 41 ? request.TargetPoints : 41;
                 Guid matchId = command.Execute(
-                    request.User1Id, request.User2Id, request.User3Id, request.User4Id);
+                    request.User1Id, request.User2Id, request.User3Id, request.User4Id, target);
 
-                return Ok(new { MatchId = matchId, Message = "Partita creata con successo!" });
+                return Ok(new { MatchId = matchId, Message = "Partita creata con successo!", TargetPoints = target });
             }
             catch (Exception ex)
             {
@@ -156,10 +157,11 @@ namespace Marafone.Presentation.Controllers
 
     public class StartMatchRequest
     {
-        public Guid User1Id { get; set; }
-        public Guid User2Id { get; set; }
-        public Guid User3Id { get; set; }
-        public Guid User4Id { get; set; }
+        public Guid User1Id      { get; set; }
+        public Guid User2Id      { get; set; }
+        public Guid User3Id      { get; set; }
+        public Guid User4Id      { get; set; }
+        public int  TargetPoints { get; set; } = 41;
     }
 
     public class SetBriscolaRequest

@@ -1,68 +1,60 @@
-﻿using Google.Cloud.Firestore;
+using Google.Cloud.Firestore;
 using Marafone.Application.Interfaces;
 using Marafone.Domain.GameLogic;
 using Marafone.Infrastructure.DatabaseModels;
 using System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json; // Usiamo il serializzatore nativo di C#
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Marafone.Infrastructure.Repositories
 {
     public class FirestoreMatchRepository : IMatchRepository
     {
         private readonly FirestoreDb _db;
-        private readonly string _collectionName = "Matches";
+        private const string CollectionName = "Matches";
+
+        private static readonly JsonSerializerOptions _jsonOpts = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy        = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true
+        };
 
         public FirestoreMatchRepository(string projectId)
         {
-            // Crea la connessione. Usa in automatico la variabile GOOGLE_APPLICATION_CREDENTIALS
             _db = FirestoreDb.Create(projectId);
         }
 
-        // Il metodo Save che l'Application Layer chiama (es. dopo aver giocato una carta)
         public void Save(Game match)
         {
-            // 1. Puntiamo al documento esatto nella collezione (se non c'è, lo crea)
-            DocumentReference docRef = _db.Collection(_collectionName).Document(match.Id.ToString());
+            var snapshot = GameSnapshotMapper.ToSnapshot(match);
+            string json  = JsonSerializer.Serialize(snapshot, _jsonOpts);
 
-            // 2. Serializziamo l'oggetto puro del dominio
-            string statoJson = JsonSerializer.Serialize(match);
-
-            // 3. Creiamo l'involucro per Firestore
             var doc = new MatchDocument
             {
-                Id = match.Id.ToString(),
-                JsonState = statoJson
+                Id        = match.Id.ToString(),
+                JsonState = json
             };
 
-            // 4. Spediamo a Google! (Uso .Wait() per sincronia, ma in app vere si usa async/Task)
+            DocumentReference docRef = _db.Collection(CollectionName).Document(match.Id.ToString());
             docRef.SetAsync(doc).Wait();
         }
 
-        public Game GetById(Guid id)
+        public Game? GetById(Guid id)
         {
-            DocumentReference docRef = _db.Collection(_collectionName).Document(id.ToString());
-            DocumentSnapshot snapshot = docRef.GetSnapshotAsync().Result;
+            DocumentReference docRef = _db.Collection(CollectionName).Document(id.ToString());
+            DocumentSnapshot  snap   = docRef.GetSnapshotAsync().Result;
 
-            if (snapshot.Exists)
-            {
-                MatchDocument doc = snapshot.ConvertTo<MatchDocument>();
-                // Rigeneriamo l'oggetto Match dal JSON!
-                return JsonSerializer.Deserialize<Game>(doc.JsonState);
-            }
+            if (!snap.Exists) return null;
 
-            return null; // Partita non trovata
+            MatchDocument doc         = snap.ConvertTo<MatchDocument>();
+            var           gameSnapshot = JsonSerializer.Deserialize<GameSnapshot>(doc.JsonState, _jsonOpts)
+                ?? throw new Exception("Deserializzazione fallita: JSON non valido");
+
+            return GameSnapshotMapper.FromSnapshot(gameSnapshot);
         }
 
         public void Remove(Guid id)
         {
-            DocumentReference docRef = _db.Collection(_collectionName).Document(id.ToString());
+            DocumentReference docRef = _db.Collection(CollectionName).Document(id.ToString());
             docRef.DeleteAsync().Wait();
         }
     }

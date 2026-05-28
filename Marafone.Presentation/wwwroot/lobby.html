@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marafone — Lobby</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="lobby-page">
+
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="header-logo">🃏</span>
+      <span class="header-title">Marafone</span>
+    </div>
+    <div class="header-right">
+      <span class="user-badge" id="header-username">Caricamento...</span>
+      <button class="btn-ghost btn-sm" onclick="logout()">Esci</button>
+    </div>
+  </header>
+
+  <main class="lobby-container">
+
+    <!-- ===== CREA PARTITA ===== -->
+    <section class="lobby-section create-section">
+      <h2 class="section-title">
+        <span class="section-icon">⚡</span>
+        Nuova Partita
+      </h2>
+
+      <div class="create-card">
+        <!-- Scelta modalità -->
+        <div class="mode-selector">
+          <label class="section-label">Modalità di gioco</label>
+          <div class="mode-buttons">
+            <button class="mode-btn" data-target="21" onclick="selectMode(this)">
+              <span class="mode-pts">21</span>
+              <span class="mode-name">Veloce</span>
+            </button>
+            <button class="mode-btn active" data-target="41" onclick="selectMode(this)">
+              <span class="mode-pts">41</span>
+              <span class="mode-name">Classica</span>
+            </button>
+            <button class="mode-btn" data-target="31" onclick="selectMode(this)">
+              <span class="mode-pts">31</span>
+              <span class="mode-name">Media</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Scelta giocatori -->
+        <div class="player-selection">
+          <label class="section-label">Seleziona 3 avversari/compagni</label>
+          <p class="selection-hint">Tu giochi nella Squadra 1 (posizione 1). Scegli chi metti nelle altre posizioni.</p>
+          <div class="player-slots">
+            <div class="slot-group">
+              <div class="slot-label">Squadra 1</div>
+              <div class="player-slot you-slot">
+                <span class="slot-icon">👤</span>
+                <span id="slot-you">TU</span>
+              </div>
+              <div class="player-slot" id="slot-p3">
+                <span class="slot-icon">➕</span>
+                <span class="slot-text">Compagno (Pos 3)</span>
+              </div>
+            </div>
+            <div class="vs-divider">VS</div>
+            <div class="slot-group">
+              <div class="slot-label">Squadra 2</div>
+              <div class="player-slot" id="slot-p2">
+                <span class="slot-icon">➕</span>
+                <span class="slot-text">Avversario (Pos 2)</span>
+              </div>
+              <div class="player-slot" id="slot-p4">
+                <span class="slot-icon">➕</span>
+                <span class="slot-text">Avversario (Pos 4)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista utenti disponibili -->
+        <div class="users-list-section">
+          <label class="section-label">Giocatori disponibili</label>
+          <div id="users-list" class="users-grid">
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+
+        <button class="btn-primary btn-create" id="btn-create-match" onclick="createMatch()" disabled>
+          <span class="btn-text">Inizia la Partita!</span>
+          <span class="btn-icon">🃏</span>
+        </button>
+        <div id="create-error" class="error-msg hidden"></div>
+      </div>
+    </section>
+
+    <!-- ===== PARTITE ATTIVE ===== -->
+    <section class="lobby-section active-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-icon">🎮</span>
+          Partite in corso
+        </h2>
+        <button class="btn-ghost btn-sm" onclick="loadMatches()">↻ Aggiorna</button>
+      </div>
+      <div id="matches-list" class="matches-grid">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+  <script src="lobby.js"></script>
+</body>
+</html>

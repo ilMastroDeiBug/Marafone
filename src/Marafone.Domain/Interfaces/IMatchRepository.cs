@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Marafone.Domain.GameLogic;
+using System;
 
 namespace Marafone.Application.Interfaces
 {
     public interface IMatchRepository
     {
-        Game GetById(Guid id);
-        void Save(Game match); // Se non esiste la crea, se esiste la aggiorna
+        Game? GetById(Guid id);
+        void Save(Game match);
         void Remove(Guid id);
     }
 }

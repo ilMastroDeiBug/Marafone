@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marafone — Tavolo di Gioco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="game-page">
+
+  <!-- HEADER -->
+  <header class="game-header">
+    <div class="header-left">
+      <button class="btn-ghost btn-sm" onclick="confirmLeave()">← Lobby</button>
+    </div>
+    <div class="game-info-bar">
+      <span id="game-target-badge" class="target-badge">●</span>
+      <span id="game-status-text" class="status-text">Caricamento...</span>
+    </div>
+    <div class="header-right">
+      <span class="user-badge" id="header-username"></span>
+    </div>
+  </header>
+
+  <!-- TAVOLO PRINCIPALE -->
+  <div class="game-layout">
+
+    <!-- GIOCATORE NORD (avversario sopra) -->
+    <div class="player-zone zone-nord" id="zone-nord">
+      <div class="player-info">
+        <div class="player-avatar" id="avatar-nord">N</div>
+        <div class="player-meta">
+          <span class="player-name" id="name-nord">—</span>
+          <span class="player-team-badge" id="team-nord"></span>
+        </div>
+        <div class="turn-indicator" id="turn-nord"></div>
+      </div>
+      <div class="opponent-hand" id="hand-nord"></div>
+    </div>
+
+    <!-- RIGA CENTRALE: Ovest | Tavolo | Est -->
+    <div class="middle-row">
+
+      <!-- GIOCATORE OVEST -->
+      <div class="player-zone zone-ovest" id="zone-ovest">
+        <div class="player-info vertical">
+          <div class="player-avatar" id="avatar-ovest">O</div>
+          <div class="player-meta">
+            <span class="player-name" id="name-ovest">—</span>
+            <span class="player-team-badge" id="team-ovest"></span>
+          </div>
+          <div class="turn-indicator" id="turn-ovest"></div>
+        </div>
+        <div class="opponent-hand vertical" id="hand-ovest"></div>
+      </div>
+
+      <!-- TAVOLO DI GIOCO -->
+      <div class="table-zone">
+
+        <!-- Briscola -->
+        <div class="briscola-display" id="briscola-display">
+          <span class="briscola-label">Briscola</span>
+          <span class="briscola-suit" id="briscola-suit">—</span>
+        </div>
+
+        <!-- Carte sul tavolo -->
+        <div class="table-cards" id="table-cards">
+          <div class="table-placeholder">Nessuna carta sul tavolo</div>
+        </div>
+
+        <!-- Punti -->
+        <div class="score-board">
+          <div class="score-team" id="score-sq1">
+            <span class="score-name" id="score-name-sq1">Squadra 1</span>
+            <div class="score-row">
+              <span class="score-label">Mano:</span>
+              <span class="score-val" id="hand-pts-sq1">0</span>
+            </div>
+            <div class="score-row">
+              <span class="score-label">Partita:</span>
+              <span class="score-val main-score" id="match-pts-sq1">0</span>
+            </div>
+          </div>
+          <div class="score-divider">⚡</div>
+          <div class="score-team" id="score-sq2">
+            <span class="score-name" id="score-name-sq2">Squadra 2</span>
+            <div class="score-row">
+              <span class="score-label">Mano:</span>
+              <span class="score-val" id="hand-pts-sq2">0</span>
+            </div>
+            <div class="score-row">
+              <span class="score-label">Partita:</span>
+              <span class="score-val main-score" id="match-pts-sq2">0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- GIOCATORE EST -->
+      <div class="player-zone zone-est" id="zone-est">
+        <div class="player-info vertical">
+          <div class="player-avatar" id="avatar-est">E</div>
+          <div class="player-meta">
+            <span class="player-name" id="name-est">—</span>
+            <span class="player-team-badge" id="team-est"></span>
+          </div>
+          <div class="turn-indicator" id="turn-est"></div>
+        </div>
+        <div class="opponent-hand vertical" id="hand-est"></div>
+      </div>
+
+    </div><!-- end middle-row -->
+
+    <!-- GIOCATORE SUD (il giocatore locale — in basso) -->
+    <div class="player-zone zone-sud" id="zone-sud">
+      <div class="my-hand-area">
+        <div class="my-hand" id="my-hand">
+          <!-- Carte del giocatore locale -->
+        </div>
+      </div>
+      <div class="player-info">
+        <div class="turn-indicator" id="turn-sud"></div>
+        <div class="player-meta">
+          <span class="player-name" id="name-sud">Tu</span>
+          <span class="player-team-badge" id="team-sud"></span>
+        </div>
+        <div class="player-avatar" id="avatar-sud">T</div>
+      </div>
+    </div>
+
+  </div><!-- end game-layout -->
+
+  <!-- OVERLAY: Scelta Briscola -->
+  <div id="overlay-briscola" class="overlay hidden">
+    <div class="overlay-card">
+      <h2>🃏 Scegli la Briscola</h2>
+      <p>Hai il <strong>4 di Denari</strong>. Scegli il seme che varrà come briscola per questa smazzata.</p>
+      <div class="suit-buttons">
+        <button class="suit-btn" data-suit="coppe"   onclick="setBriscola('coppe')">♥ Coppe</button>
+        <button class="suit-btn" data-suit="denara"  onclick="setBriscola('denara')">♦ Denara</button>
+        <button class="suit-btn" data-suit="bastoni" onclick="setBriscola('bastoni')">♣ Bastoni</button>
+        <button class="suit-btn" data-suit="spade"   onclick="setBriscola('spade')">♠ Spade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY: Fine Partita -->
+  <div id="overlay-gameover" class="overlay hidden">
+    <div class="overlay-card gameover-card">
+      <div class="confetti-area" id="confetti"></div>
+      <h2 id="gameover-title">Partita Terminata!</h2>
+      <p id="gameover-body"></p>
+      <div class="gameover-scores" id="gameover-scores"></div>
+      <button class="btn-primary" onclick="goToLobby()">Torna alla Lobby</button>
+    </div>
+  </div>
+
+  <!-- OVERLAY: Errore -->
+  <div id="overlay-error" class="overlay hidden">
+    <div class="overlay-card error-card">
+      <div class="error-icon">⚠️</div>
+      <p id="error-msg-text"></p>
+      <button class="btn-ghost" onclick="document.getElementById('overlay-error').classList.add('hidden')">OK</button>
+    </div>
+  </div>
+
+  <!-- OVERLAY: Nuova Smazzata -->
+  <div id="overlay-new-hand" class="overlay hidden">
+    <div class="overlay-card">
+      <h2>🔄 Smazzata terminata!</h2>
+      <div id="hand-results"></div>
+      <button class="btn-primary" id="btn-next-hand" onclick="startNextHand()">Nuova Smazzata</button>
+    </div>
+  </div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar" id="action-bar">
+    <button class="btn-danger btn-sm" onclick="forfeit()" id="btn-forfeit">Abbandona</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+  <script src="app.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

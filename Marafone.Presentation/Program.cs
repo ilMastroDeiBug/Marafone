@@ -1,4 +1,4 @@
-﻿using Marafone.Application.Interfaces;
+using Marafone.Application.Interfaces;
 using Marafone.Application.UseCases.Commands;
 using Marafone.Application.UseCases.Queries;
 using Marafone.Infrastructure.Repositories;
@@ -6,52 +6,84 @@ using Marafone.Presentation.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// =========================================================================
+// SERVICES
+// =========================================================================
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSignalR();
 
+// Serve file statici dalla wwwroot (la UI web)
+builder.Services.AddDirectoryBrowser();
+
+// CORS — permette al frontend (es. file:// o localhost:porta diversa) di chiamare l'API
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:5000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5500",  // Live Server di VS Code
+                "null"                     // per file:// su browser
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();           // necessario per SignalR
+    });
+});
+
 // =========================================================================
-// 🏗️ INJECTION CONTAINER (Clean Architecture Setup)
+// DEPENDENCY INJECTION
 // =========================================================================
 
-// 1. REPOSITORIES (Infrastructure Layer) -> SINGLETON
-// Sostituisci la stringa con il vero Project ID che trovi nella console di Firebase
-string firebaseProjectId = "il-tuo-project-id-firebase";
-builder.Services.AddSingleton<IMatchRepository>(new FirestoreMatchRepository(firebaseProjectId));
+// REPOSITORY — in dev usiamo InMemory. Per produzione usa FirestoreMatchRepository.
+var useFirestore  = builder.Configuration.GetValue<bool>("Firebase:Enabled");
+var firestoreId   = builder.Configuration["Firebase:ProjectId"] ?? "";
 
-// Visto che non abbiamo ancora scritto la repo di Firestore per gli Utenti,
-// iniettiamo quella finta in memoria per ora, così il progetto compila!
+if (useFirestore && !string.IsNullOrWhiteSpace(firestoreId))
+{
+    builder.Services.AddSingleton<IMatchRepository>(new FirestoreMatchRepository(firestoreId));
+}
+else
+{
+    builder.Services.AddSingleton<IMatchRepository, InMemoryMatchRepository>();
+}
+
+// Sempre InMemory per gli utenti (in attesa di FirestoreUserRepository)
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
 
-// 2. USE CASES: COMMANDS (Application Layer) -> TRANSIENT
+// COMMANDS
 builder.Services.AddTransient<StartMatchCommand>();
 builder.Services.AddTransient<SetBriscolaCommand>();
 builder.Services.AddTransient<PlayCardCommand>();
 builder.Services.AddTransient<StartNextHandCommand>();
 builder.Services.AddTransient<ForfeitMatchCommand>();
 
-// 3. USE CASES: QUERIES (Application Layer) -> TRANSIENT
+// QUERIES
 builder.Services.AddTransient<GetMatchByIdQuery>();
 builder.Services.AddTransient<GetMatchForPlayerQuery>();
 
 // =========================================================================
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseCors("AllowAll");
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Serve la UI web dalla cartella wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
+app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapHub<MatchHub>("/matchHub");
-
 app.MapControllers();
 
 app.Run();

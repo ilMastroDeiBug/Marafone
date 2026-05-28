@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +11,6 @@ namespace Marafone.Domain.ValueObjects
         coppe,
         denara,
         bastoni,
-        spade,
-        nessuna_briscola_per_test_finto
+        spade
     }
 }
